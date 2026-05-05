@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroSense AI | Create Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/auth.css">
+</head>
+<body>
+    <div id="three-bg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden;"></div>
+    <div class="auth-container" style="position: relative; z-index: 10;">
+        <div class="glass-panel">
+            <div class="header">
+                <h1>Create <span>Account</span></h1>
+                <p>Register to setup your clinical dashboard</p>
+            </div>
+
+            <form id="signup-form" autocomplete="off">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="fullname" placeholder="Full Name" required autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Email Address" required autocomplete="off">
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Password" required autocomplete="new-password">
+                    <i class="fas fa-eye toggle-password" id="toggle-pwd"></i>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-check-circle"></i>
+                    <input type="password" id="confirm-password" placeholder="Confirm Password" required autocomplete="new-password">
+                </div>
+
+                <div class="options">
+                    <label style="align-items: flex-start; line-height: 1.4;">
+                        <input type="checkbox" id="terms" required style="margin-top: 3px;"> 
+                        <span>I agree to the <a href="#">Terms & Conditions</a> and Medical Data Consent.</span>
+                    </label>
+                </div>
+
+                <div id="error-msg" class="error-message"></div>
+
+                <button type="submit" class="btn-primary" id="signup-btn">
+                    <span id="btn-text">Create Account</span>
+                    <div class="spinner" id="btn-spinner"></div>
+                </button>
+            </form>
+
+            <div class="footer-text">
+                Already have an account? <a href="/login">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-info-circle" id="toast-icon"></i>
+        <span id="toast-message">Notification message</span>
+    </div>
+
+    <script type="module" src="../static/js/auth.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // 3D Background Animation
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('three-bg').appendChild(renderer.domElement);
+
+        const geometry = new THREE.BufferGeometry();
+        const particlesCount = 1500;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 10;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const material = new THREE.PointsMaterial({
+            size: 0.015,
+            color: 0x38bdf8,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particlesMesh = new THREE.Points(geometry, material);
+        scene.add(particlesMesh);
+        camera.position.z = 3;
+
+        let mouseX = 0;
+        let mouseY = 0;
+        document.addEventListener('mousemove', (event) => {
+            mouseX = event.clientX / window.innerWidth - 0.5;
+            mouseY = event.clientY / window.innerHeight - 0.5;
+        });
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+            
+            particlesMesh.rotation.y = elapsedTime * 0.1;
+            particlesMesh.rotation.x = elapsedTime * 0.05;
+            
+            camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY * 0.5 - camera.position.y) * 0.05;
+            
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

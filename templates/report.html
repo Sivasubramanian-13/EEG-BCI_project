@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroSense AI | Generate Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="dashboard-layout" style="display: none;">
+    <!-- SIDEBAR -->
+    <aside class="sidebar glass-panel">
+        <div class="brand">
+            <i class="fas fa-brain"></i> NeuroSense AI
+        </div>
+
+        <div class="patient-card">
+            <img id="patient-avatar" src="https://ui-avatars.com/api/?name=Patient&background=0D8ABC&color=fff" alt="Patient Avatar">
+            <h3 id="patient-name">Loading...</h3>
+            <p id="patient-details"><span id="patient-age">--</span> yrs • <span id="patient-gender">--</span></p>
+            <p id="patient-condition" style="color: var(--accent); font-weight: 600;">Loading...</p>
+            <p style="font-size: 11px; margin-top: 5px;">ID: <span id="patient-id">--</span></p>
+        </div>
+
+        <ul class="nav-menu">
+            <li><a href="/dashboard"><i class="fas fa-desktop"></i> Dashboard</a></li>
+            <li><a href="/journey"><i class="fas fa-route"></i> Journey Page</a></li>
+            <li><a href="/report" class="active"><i class="fas fa-file-medical-alt"></i> Generate Report</a></li>
+            <li><a href="/history"><i class="fas fa-history"></i> History / Logs</a></li>
+            <li><a href="/settings"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
+
+        <button class="btn-logout" id="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </aside>
+
+    <!-- MAIN VIEW -->
+    <main class="main-view glass-panel" style="grid-column: 2 / span 2;">
+        <div class="header-top">
+            <h2>Generate Clinical Report</h2>
+        </div>
+        
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 16px; padding: 40px; margin-top: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60%;">
+            <i class="fas fa-file-pdf" style="font-size: 60px; color: var(--status-red); margin-bottom: 20px;"></i>
+            <h3 style="font-size: 24px; margin-bottom: 10px;">Daily Assessment Summary</h3>
+            <p style="color: var(--text-muted); max-width: 500px; margin-bottom: 30px;">
+                Generate a comprehensive PDF export aggregating the patient's intent frequencies, emotional fluctuations, and pain history over the selected period.
+            </p>
+            <button style="background: var(--status-green); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-download"></i> Generate PDF Report
+            </button>
+        </div>
+    </main>
+</div>
+
+<script type="module" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

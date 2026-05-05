@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroSense AI | Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="dashboard-layout" style="display: none;">
+    <!-- SIDEBAR -->
+    <aside class="sidebar glass-panel">
+        <div class="brand">
+            <i class="fas fa-brain"></i> NeuroSense AI
+        </div>
+
+        <div class="patient-card">
+            <img id="patient-avatar" src="https://ui-avatars.com/api/?name=Patient&background=0D8ABC&color=fff" alt="Patient Avatar">
+            <h3 id="patient-name">Loading...</h3>
+            <p id="patient-details"><span id="patient-age">--</span> yrs • <span id="patient-gender">--</span></p>
+            <p id="patient-condition" style="color: var(--accent); font-weight: 600;">Loading...</p>
+            <p style="font-size: 11px; margin-top: 5px;">ID: <span id="patient-id">--</span></p>
+        </div>
+
+        <ul class="nav-menu">
+            <li><a href="/dashboard"><i class="fas fa-desktop"></i> Dashboard</a></li>
+            <li><a href="/journey"><i class="fas fa-route"></i> Journey Page</a></li>
+            <li><a href="/report"><i class="fas fa-file-medical-alt"></i> Generate Report</a></li>
+            <li><a href="/history"><i class="fas fa-history"></i> History / Logs</a></li>
+            <li><a href="/settings" class="active"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
+
+        <button class="btn-logout" id="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </aside>
+
+    <!-- MAIN VIEW -->
+    <main class="main-view glass-panel" style="grid-column: 2 / span 2;">
+        <div class="header-top">
+            <h2>System Settings</h2>
+        </div>
+        
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px; margin-top: 20px;">
+            <h3 style="color: #94a3b8; margin-bottom: 10px;">Configuration</h3>
+            <p style="color: var(--text-muted); line-height: 1.6;">Configure hardware BCI headset connections and system themes.</p>
+            
+            <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                    <div>
+                        <h4 style="margin-bottom: 5px;">Headset Connection</h4>
+                        <span style="font-size: 13px; color: var(--text-muted);">Manage your EEG device pairing.</span>
+                    </div>
+                    <button style="background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer;">Connect Device</button>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                    <div>
+                        <h4 style="margin-bottom: 5px;">Data Synchronization</h4>
+                        <span style="font-size: 13px; color: var(--text-muted);">Sync local logs with Firebase Cloud.</span>
+                    </div>
+                    <button style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 8px 16px; border-radius: 8px; cursor: pointer;">Sync Now</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script type="module" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

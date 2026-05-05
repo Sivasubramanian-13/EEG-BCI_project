@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroSense AI | Clinical Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+<div class="dashboard-layout" style="display: none;">
+
+    <!-- COLUMN 1: Sidebar (Patient Panel) -->
+    <aside class="sidebar glass-panel">
+        <div class="brand">
+            <i class="fas fa-brain"></i> NeuroSense AI
+        </div>
+
+        <div class="patient-card">
+            <!-- Avatar could be dynamic, using a placeholder icon -->
+            <img id="patient-avatar" src="https://ui-avatars.com/api/?name=Patient&background=0D8ABC&color=fff" alt="Patient Avatar">
+            <h3 id="patient-name">Loading...</h3>
+            <p id="patient-details"><span id="patient-age">--</span> yrs • <span id="patient-gender">--</span></p>
+            <p id="patient-condition" style="color: var(--accent); font-weight: 600;">Loading...</p>
+            <p style="font-size: 11px; margin-top: 5px;">ID: <span id="patient-id">--</span></p>
+        </div>
+
+        <ul class="nav-menu">
+            <li><a href="/dashboard" class="active"><i class="fas fa-desktop"></i> Dashboard</a></li>
+            <li><a href="/journey"><i class="fas fa-route"></i> Journey Page</a></li>
+            <li><a href="/report"><i class="fas fa-file-medical-alt"></i> Generate Report</a></li>
+            <li><a href="/history"><i class="fas fa-history"></i> History / Logs</a></li>
+            <li><a href="/settings"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
+
+        <button class="btn-logout" id="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </aside>
+
+    <!-- COLUMN 2: Center Core AI Visualization -->
+    <main class="main-view glass-panel" id="drop-zone">
+        <!-- Drag & Drop Overlay -->
+        <div class="drag-overlay" id="drag-overlay">
+            Drop EEG data file here
+        </div>
+
+        <div class="header-top">
+            <h2>Neural Interpretation</h2>
+            <div>
+                <button class="upload-btn" id="stream-toggle" style="background: var(--accent); color: white; padding: 8px 16px; border-radius: 8px; font-size: 14px; border: none; font-weight: 600;">
+                    <i class="fas fa-play"></i> Start Stream
+                </button>
+            </div>
+        </div>
+
+        <!-- Wave Visualization Grid -->
+        <div class="brain-visualizer">
+            <canvas id="eegWaveChart"></canvas>
+        </div>
+
+        <!-- AI Output Cards -->
+        <div class="ai-output-grid">
+            <div class="ai-card" id="card-intent" style="position: relative;">
+                <div id="vanta-intent" style="position: absolute; top:0; left:0; width:100%; height:100%; z-index: 0; opacity: 0.8; border-radius: 16px; pointer-events: none;"></div>
+                <div style="position: relative; z-index: 2;">
+                    <div class="indicator" style="background: var(--text-muted);"></div>
+                    <h4>Communication Intent</h4>
+                    <div class="value" id="val-intent">---</div>
+                    <div class="conf" id="conf-intent">Confidence: --%</div>
+                </div>
+            </div>
+            
+            <div class="ai-card" id="card-emotion" style="position: relative;">
+                <div id="vanta-emotion" style="position: absolute; top:0; left:0; width:100%; height:100%; z-index: 0; opacity: 0.8; border-radius: 16px; pointer-events: none;"></div>
+                <div style="position: relative; z-index: 2;">
+                    <div class="indicator" style="background: var(--text-muted);"></div>
+                    <h4>Affective State</h4>
+                    <div class="value" id="val-emotion">Calm</div>
+                    <div class="conf" id="conf-emotion">Confidence: --%</div>
+                </div>
+            </div>
+
+            <div class="ai-card" id="card-pain" style="position: relative;">
+                <div id="vanta-pain" style="position: absolute; top:0; left:0; width:100%; height:100%; z-index: 0; opacity: 0.8; border-radius: 16px; pointer-events: none;"></div>
+                <div style="position: relative; z-index: 2;">
+                    <div class="indicator" style="background: var(--text-muted);"></div>
+                    <h4>Pain Severity</h4>
+                    <div class="value" id="val-pain">No Pain</div>
+                    <div class="conf" id="conf-pain">Confidence: --%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ChatGPT Style Input -->
+        <div class="input-section">
+            <button class="upload-btn" id="upload-trigger" title="Upload EEG File (.mat)"><i class="fas fa-plus-circle"></i></button>
+            <input type="file" id="file-input" style="display:none;" accept=".mat,.csv">
+            <input type="text" id="chat-input" placeholder="Type a command or drop a file to process..." disabled>
+            <div class="processing-spinner" id="processing-spinner"></div>
+            <button class="send-btn" id="send-btn" disabled><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </main>
+
+    <!-- COLUMN 3: Right Alerts & Monitoring -->
+    <aside class="right-panel glass-panel">
+        <div id="file-log" style="font-size:12px; color:#38bdf8; margin-top:10px;">
+                    No file loaded
+        </div>
+        <!-- Alerts Grid -->
+        <div>
+            <h3 class="section-title">Critical Alerts</h3>
+            <div class="alerts-container" id="alerts-grid">
+                <!-- Alerts injected via JS -->
+            </div>
+        </div>
+
+        <!-- Trend Visualization -->
+        <div>
+            <h3 class="section-title">Trends Over Time</h3>
+            <div class="trend-box">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Report Snapshot -->
+        <div>
+            <h3 class="section-title">Daily Snapshot</h3>
+            <div class="report-snapshot">
+                <div class="snapshot-item">
+                    <div class="val" id="snap-pain">Low</div>
+                    <div class="lbl">Avg Pain</div>
+                </div>
+                <div class="snapshot-item">
+                    <div class="val" id="snap-emotion">Calm</div>
+                    <div class="lbl">Dominant</div>
+                </div>
+                <div class="snapshot-item">
+                    <div class="val" id="snap-alerts">0</div>
+                    <div class="lbl">Alerts</div>
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+</div>
+
+<script type="module" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.cells.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+<script>
+    window.initVantaAnimations = function() {
+        // Intent: DOTS
+        VANTA.DOTS({
+            el: "#vanta-intent",
+            mouseControls: false, touchControls: false, gyroControls: false,
+            minHeight: 100.00, minWidth: 100.00,
+            scale: 1.00, color: 0x38bdf8, color2: 0x0284c7, backgroundColor: 0x0f172a,
+            size: 3.00, spacing: 20.00, showLines: true
+        });
+        // Emotion: CELLS
+        VANTA.CELLS({
+            el: "#vanta-emotion",
+            mouseControls: false, touchControls: false, gyroControls: false,
+            minHeight: 100.00, minWidth: 100.00,
+            scale: 1.00, color1: 0x0284c7, color2: 0x38bdf8,
+            size: 1.50, speed: 1.50
+        });
+        // Pain: NET
+        VANTA.NET({
+            el: "#vanta-pain",
+            mouseControls: false, touchControls: false, gyroControls: false,
+            minHeight: 100.00, minWidth: 100.00,
+            scale: 1.00, color: 0xef4444, backgroundColor: 0x0f172a,
+            points: 8.00, maxDistance: 18.00, spacing: 18.00
+        });
+    };
+</script>
+</body>
+</html>

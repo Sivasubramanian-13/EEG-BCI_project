@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroSense AI | Patient Journey</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="dashboard-layout" style="display: none;">
+    <!-- SIDEBAR -->
+    <aside class="sidebar glass-panel">
+        <div class="brand">
+            <i class="fas fa-brain"></i> NeuroSense AI
+        </div>
+
+        <div class="patient-card">
+            <img id="patient-avatar" src="https://ui-avatars.com/api/?name=Patient&background=0D8ABC&color=fff" alt="Patient Avatar">
+            <h3 id="patient-name">Loading...</h3>
+            <p id="patient-details"><span id="patient-age">--</span> yrs • <span id="patient-gender">--</span></p>
+            <p id="patient-condition" style="color: var(--accent); font-weight: 600;">Loading...</p>
+            <p style="font-size: 11px; margin-top: 5px;">ID: <span id="patient-id">--</span></p>
+        </div>
+
+        <ul class="nav-menu">
+            <li><a href="/dashboard"><i class="fas fa-desktop"></i> Dashboard</a></li>
+            <li><a href="/journey" class="active"><i class="fas fa-route"></i> Journey Page</a></li>
+            <li><a href="/report"><i class="fas fa-file-medical-alt"></i> Generate Report</a></li>
+            <li><a href="/history"><i class="fas fa-history"></i> History / Logs</a></li>
+            <li><a href="/settings"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
+
+        <button class="btn-logout" id="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </aside>
+
+    <!-- MAIN VIEW -->
+    <main class="main-view glass-panel" style="grid-column: 2 / span 2;">
+        <div class="header-top">
+            <h2>Patient Journey</h2>
+        </div>
+        
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px; margin-top: 20px; position: relative;">
+            <p style="color: var(--text-muted); margin-bottom: 30px;">This module tracks the long-term EEG recovery journey.</p>
+            
+            <div style="position: relative; padding-left: 30px; border-left: 2px solid var(--accent);">
+                
+                <div style="position: relative; margin-bottom: 30px;">
+                    <div style="position: absolute; left: -37px; top: 0; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent);"></div>
+                    <h4 style="color: var(--text-primary); margin-bottom: 5px;">Week 1: Initial Baseline</h4>
+                    <p style="color: var(--text-muted); font-size: 14px;">High levels of distress and pain recorded. Communication intent was low.</p>
+                </div>
+                
+                <div style="position: relative; margin-bottom: 30px;">
+                    <div style="position: absolute; left: -37px; top: 0; width: 12px; height: 12px; background: var(--status-yellow); border-radius: 50%; box-shadow: 0 0 10px var(--status-yellow);"></div>
+                    <h4 style="color: var(--text-primary); margin-bottom: 5px;">Week 2: Treatment Adaptation</h4>
+                    <p style="color: var(--text-muted); font-size: 14px;">Slight improvement in emotional state. Pain peaks are becoming less frequent.</p>
+                </div>
+                
+                <div style="position: relative;">
+                    <div style="position: absolute; left: -37px; top: 0; width: 12px; height: 12px; background: var(--status-green); border-radius: 50%; box-shadow: 0 0 10px var(--status-green);"></div>
+                    <h4 style="color: var(--text-primary); margin-bottom: 5px;">Current Status</h4>
+                    <p style="color: var(--text-muted); font-size: 14px;">Patient is demonstrating consistent calm states. Communication intent frequency has increased by 40%.</p>
+                </div>
+                
+            </div>
+        </div>
+    </main>
+</div>
+
+<script type="module" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

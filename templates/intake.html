@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroSense AI | Patient Intake</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/intake.css">
+</head>
+<body>
+
+    <!-- Loading Overlay (checking auth/firestore state) -->
+    <div id="loading-overlay">
+        <div class="big-spinner"></div>
+        <h2>Initializing...</h2>
+        <p>Checking patient records</p>
+    </div>
+
+    <div class="intake-container" id="intake-content" style="display: none;">
+        <div class="intake-header">
+            <h1>Patient Intake Form</h1>
+            <p>Please complete this medical profile to access your dashboard.</p>
+            <button class="theme-toggle" id="theme-toggle" title="Toggle Dark Mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <form class="intake-form" id="intake-form">
+            
+            <!-- SECTION 1: Personal Info -->
+            <div class="form-section active" id="step-1">
+                <h2 class="section-title"><i class="fas fa-user"></i> Personal Information</h2>
+                
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="fullname" class="form-control" readonly placeholder="Auto-filled from account">
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Age / Date of Birth <i class="fas fa-info-circle tooltip-icon" title="Required for medical context"></i></label>
+                        <input type="date" id="dob" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="gender" class="form-control" required>
+                            <option value="">Select Gender...</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="tel" id="contact" class="form-control" placeholder="+1 (555) 000-0000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Emergency Contact</label>
+                        <input type="tel" id="emergency-contact" class="form-control" placeholder="+1 (555) 111-1111" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: Medical Info -->
+            <div class="form-section" id="step-2">
+                <h2 class="section-title"><i class="fas fa-notes-medical"></i> Medical Information</h2>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Type of Paralysis / Condition</label>
+                        <select id="condition-type" class="form-control" required>
+                            <option value="">Select Condition...</option>
+                            <option value="Quadriplegia / Tetraplegia">Quadriplegia / Tetraplegia</option>
+                            <option value="Paraplegia">Paraplegia</option>
+                            <option value="ALS (Lou Gehrig's Disease)">ALS (Lou Gehrig's Disease)</option>
+                            <option value="Locked-in Syndrome">Locked-in Syndrome</option>
+                            <option value="Severe Stroke">Severe Stroke</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Duration (Since when)</label>
+                        <input type="text" id="duration" class="form-control" placeholder="e.g., 5 years, since 2018" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Cause of Condition</label>
+                    <div class="voice-input-wrapper">
+                        <input type="text" id="cause" class="form-control" placeholder="e.g., Spinal Cord Injury" required>
+                        <button type="button" class="mic-btn" title="Use Voice Input" onclick="startVoiceInput('cause')">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Existing Medical Conditions & Current Medications</label>
+                    <div class="voice-input-wrapper">
+                        <textarea id="medical-history" class="form-control" placeholder="Please list any other conditions or medications..."></textarea>
+                        <button type="button" class="mic-btn" style="top: 20%;" title="Use Voice Input" onclick="startVoiceInput('medical-history')">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: Consent -->
+            <div class="form-section" id="step-3">
+                <h2 class="section-title"><i class="fas fa-shield-alt"></i> Consent & Finalization</h2>
+                
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">
+                    Your data is secured using end-to-end encryption. Firebase Firestore rules strictly limit access to your records to authenticated sessions only.
+                </p>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="consent-data" required>
+                    <label for="consent-data">I consent to the collection and processing of my medical data for use in the NeuroSense AI model. I understand this data is used solely to interpret intent, emotion, and pain levels.</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="consent-terms" required>
+                    <label for="consent-terms">I agree to the Terms of Service and understand that this tool is for research and monitoring, not a substitute for emergency medical services.</label>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="prev-btn" style="visibility: hidden;">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button type="button" class="btn btn-primary" id="next-btn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+                <button type="submit" class="btn btn-primary" id="submit-btn" style="display: none;">
+                    <span>Submit Profile</span>
+                    <div class="spinner" id="submit-spinner"></div>
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Voice Recognition Script injected globally for easy inline access -->
+    <script>
+        function startVoiceInput(inputId) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Your browser does not support Speech Recognition. Please try Chrome.");
+                return;
+            }
+            
+            const recognition = new SpeechRecognition();
+            const inputField = document.getElementById(inputId);
+            const micBtn = inputField.nextElementSibling;
+            
+            recognition.onstart = function() {
+                micBtn.classList.add('recording');
+            };
+            
+            recognition.onresult = function(event) {
+                const currentText = inputField.value;
+                const transcript = event.results[0][0].transcript;
+                inputField.value = currentText ? currentText + " " + transcript : transcript;
+            };
+            
+            recognition.onend = function() {
+                micBtn.classList.remove('recording');
+            };
+            
+            recognition.start();
+        }
+    </script>
+
+    <script type="module" src="../static/js/intake.js"></script>
+</body>
+</html>
