@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeuroSense AI | Settings</title>
+    <title>VoxAura AI | Settings</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -14,13 +14,13 @@
     <!-- SIDEBAR -->
     <aside class="sidebar glass-panel">
         <div class="brand">
-            <i class="fas fa-brain"></i> NeuroSense AI
+            <i class="fas fa-brain"></i> VoxAura AI
         </div>
 
         <div class="patient-card">
             <img id="patient-avatar" src="https://ui-avatars.com/api/?name=Patient&background=0D8ABC&color=fff" alt="Patient Avatar">
             <h3 id="patient-name">Loading...</h3>
-            <p id="patient-details"><span id="patient-age">--</span> yrs • <span id="patient-gender">--</span></p>
+            <p id="patient-details"><span id="patient-age">--</span> yrs &bull; <span id="patient-gender">--</span></p>
             <p id="patient-condition" style="color: var(--accent); font-weight: 600;">Loading...</p>
             <p style="font-size: 11px; margin-top: 5px;">ID: <span id="patient-id">--</span></p>
         </div>
@@ -64,11 +64,39 @@
                     </div>
                     <button style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 8px 16px; border-radius: 8px; cursor: pointer;">Sync Now</button>
                 </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                    <div>
+                        <h4 style="margin-bottom: 5px;">Theme Interface</h4>
+                        <span style="font-size: 13px; color: var(--text-muted);">Toggle between Dark and Light mode.</span>
+                    </div>
+                    <button id="theme-toggle-btn" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer;">Toggle Theme</button>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                    <div>
+                        <h4 style="margin-bottom: 5px;">UI Density</h4>
+                        <span style="font-size: 13px; color: var(--text-muted);">Switch between Compact and Comfortable layout.</span>
+                    </div>
+                    <select id="density-select" style="padding: 8px 16px; border-radius: 8px; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border-glass);">
+                        <option value="comfortable" style="color: black;">Comfortable</option>
+                        <option value="compact" style="color: black;">Compact</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px; border-left: 3px solid var(--status-yellow);">
+                    <div>
+                        <h4 style="margin-bottom: 5px;">Export Patient Data</h4>
+                        <span style="font-size: 13px; color: var(--text-muted);">Download a complete JSON payload of your profile and history.</span>
+                    </div>
+                    <button id="export-data-btn" style="background: var(--status-yellow); color: black; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;">Export JSON</button>
+                </div>
             </div>
         </div>
     </main>
 </div>
 
 <script type="module" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/settings.js') }}"></script>
 </body>
 </html>

@@ -4,13 +4,13 @@ const uploadZone = document.querySelector('.upload-zone');
 const fileInput = document.getElementById('file-input');
 const startBtn = document.getElementById('start-btn');
 
+// UI refs
 const intentEl = document.getElementById("intent-display");
 const intentConf = document.getElementById("intent-conf");
 const emotionEl = document.getElementById("emotion-display");
 const painEl = document.getElementById("pain-display");
 
-let lastFile = "";
-
+// memory (for smooth UI)
 let lastData = {
     intent: "---",
     intentConf: "--%",
@@ -20,8 +20,9 @@ let lastData = {
     painConf: "--%"
 };
 
+
 // =========================
-// UPLOAD
+// 🔹 UPLOAD
 // =========================
 uploadZone.addEventListener('click', () => fileInput.click());
 
@@ -35,18 +36,26 @@ fileInput.addEventListener('change', async function () {
 
     uploadZone.innerHTML = "Uploading...";
 
-    await fetch("/upload", {
-        method: "POST",
-        body: formData
-    });
+    try {
+        await fetch("/upload", {
+            method: "POST",
+            body: formData
+        });
 
-    uploadZone.innerHTML = "File Loaded ✅";
+        uploadZone.innerHTML = "File Loaded ✅";
+
+    } catch (e) {
+        uploadZone.innerHTML = "Upload Failed ❌";
+        console.error(e);
+    }
 });
 
+
 // =========================
-// STREAM
+// 🔹 START / STOP
 // =========================
 startBtn.addEventListener("click", () => {
+
     streaming = !streaming;
 
     if (streaming) {
@@ -57,23 +66,37 @@ startBtn.addEventListener("click", () => {
     }
 });
 
+
+// =========================
+// 🔹 STREAM LOOP
+// =========================
 async function streamLoop() {
+
     while (streaming) {
-        const res = await fetch("/stream");
-        const data = await res.json();
 
-        updateUI(data);
+        try {
+            const res = await fetch("/stream");
+            const data = await res.json();
 
-        await new Promise(r => setTimeout(r, 600));
+            updateUI(data);
+
+        } catch (e) {
+            console.log("Stream error:", e);
+        }
+
+        await new Promise(r => setTimeout(r, 800)); // smooth refresh
     }
 }
 
+
 // =========================
-// UI UPDATE
+// 🔹 UPDATE UI (FINAL FIX)
 // =========================
 function updateUI(data) {
 
+    // -----------------
     // INTENT
+    // -----------------
     if (data.intent.label !== "---") {
         lastData.intent = data.intent.label;
         lastData.intentConf = data.intent.conf;
@@ -82,27 +105,27 @@ function updateUI(data) {
     intentEl.innerText = lastData.intent;
     intentConf.innerText = lastData.intentConf;
 
+
+    // -----------------
     // EMOTION
+    // -----------------
     if (data.emotion.conf !== "--%") {
         lastData.emotion = data.emotion.label;
         lastData.emotionConf = data.emotion.conf;
     }
 
-    emotionEl.innerText = `${lastData.emotion} (${lastData.emotionConf})`;
+    emotionEl.innerText =
+        `${lastData.emotion} (${lastData.emotionConf})`;
 
+
+    // -----------------
     // PAIN
+    // -----------------
     if (data.pain.conf !== "--%") {
         lastData.pain = data.pain.value;
         lastData.painConf = data.pain.conf;
     }
 
-    painEl.innerText = `${lastData.pain} (${lastData.painConf})`;
-
-    // FILE NAME
-    if (data.filename && data.filename !== lastFile) {
-        lastFile = data.filename;
-
-        const logEl = document.getElementById("file-log");
-        if (logEl) logEl.innerText = lastFile;
-    }
+    painEl.innerText =
+        `${lastData.pain} (${lastData.painConf})`;
 }

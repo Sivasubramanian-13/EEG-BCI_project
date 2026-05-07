@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase-config.js";
 import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ==========================================
 // GLOBALS & STATE
@@ -9,6 +9,7 @@ let streaming = false;
 let alertsCount = 0;
 let lastPainValue = "No Pain";
 let lastEmotionValue = "Calm";
+let currentUser = null;
 
 // ==========================================
 // DOM ELEMENTS
@@ -50,6 +51,7 @@ onAuthStateChanged(auth, (user) => {
         // Not logged in, redirect
         window.location.href = "/login"; 
     } else {
+        currentUser = user;
         // Authentication confirmed, show the dashboard
         const dashboardLayout = document.querySelector('.dashboard-layout');
         if (dashboardLayout) {
@@ -102,7 +104,7 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-logoutBtn.addEventListener("click", async () => {
+logoutBtn?.addEventListener("click", async () => {
     try {
         await signOut(auth);
         window.location.href = "/login";
@@ -123,7 +125,7 @@ logoutBtn.addEventListener("click", async () => {
 // Realtime EEG Wave
 let eegChart = null;
 const eegCanvas = document.getElementById("eegWaveChart");
-if (eegCanvas) {
+if (eegCanvas && typeof Chart !== 'undefined') {
     const eegCtx = eegCanvas.getContext("2d");
     eegChart = new Chart(eegCtx, {
         type: 'line',
@@ -183,7 +185,7 @@ if (eegCanvas) {
 // Trend Chart
 let trendChart = null;
 const trendCanvas = document.getElementById("trendChart");
-if (trendCanvas) {
+if (trendCanvas && typeof Chart !== 'undefined') {
     const trendCtx = trendCanvas.getContext("2d");
     trendChart = new Chart(trendCtx, {
         type: 'line',
@@ -252,28 +254,43 @@ function getColorForState(type, value) {
 }
 
 // Add Alert Function
-function addAlert(type, message, isCritical) {
-    if (!alertsGrid) return;
-    alertsCount++;
-    if (snapAlerts) snapAlerts.innerText = alertsCount;
+async function addAlert(type, message, isCritical) {
+    if (alertsGrid) {
+        alertsCount++;
+        if (snapAlerts) snapAlerts.innerText = alertsCount;
 
-    const alertEl = document.createElement("div");
-    alertEl.className = `alert-card ${isCritical ? 'warning' : 'normal'}`;
-    const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-    
-    alertEl.innerHTML = `
-        <div class="alert-header">
-            <span>${type.toUpperCase()}</span>
-            <span>${timeStr}</span>
-        </div>
-        <div class="alert-msg">${message}</div>
-    `;
-    
-    alertsGrid.prepend(alertEl);
-    
-    // Keep max 20 alerts
-    if(alertsGrid.children.length > 20) {
-        alertsGrid.removeChild(alertsGrid.lastChild);
+        const alertEl = document.createElement("div");
+        alertEl.className = `alert-card ${isCritical ? 'warning' : 'normal'}`;
+        const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+        
+        alertEl.innerHTML = `
+            <div class="alert-header">
+                <span>${type.toUpperCase()}</span>
+                <span>${timeStr}</span>
+            </div>
+            <div class="alert-msg">${message}</div>
+        `;
+        
+        alertsGrid.prepend(alertEl);
+        
+        // Keep max 20 alerts
+        if(alertsGrid.children.length > 20) {
+            alertsGrid.removeChild(alertsGrid.lastChild);
+        }
+    }
+
+    // Push to Firestore
+    if (currentUser) {
+        try {
+            await addDoc(collection(db, "patients", currentUser.uid, "alerts"), {
+                type: type,
+                message: message,
+                isCritical: isCritical,
+                createdAt: serverTimestamp()
+            });
+        } catch (e) {
+            console.error("Error saving alert to Firestore", e);
+        }
     }
 }
 

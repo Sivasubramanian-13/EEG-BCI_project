@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeuroSense AI | History & Logs</title>
+    <title>VoxAura AI | History & Logs</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -14,13 +14,13 @@
     <!-- SIDEBAR -->
     <aside class="sidebar glass-panel">
         <div class="brand">
-            <i class="fas fa-brain"></i> NeuroSense AI
+            <i class="fas fa-brain"></i> VoxAura AI
         </div>
 
         <div class="patient-card">
             <img id="patient-avatar" src="https://ui-avatars.com/api/?name=Patient&background=0D8ABC&color=fff" alt="Patient Avatar">
             <h3 id="patient-name">Loading...</h3>
-            <p id="patient-details"><span id="patient-age">--</span> yrs • <span id="patient-gender">--</span></p>
+            <p id="patient-details"><span id="patient-age">--</span> yrs &bull; <span id="patient-gender">--</span></p>
             <p id="patient-condition" style="color: var(--accent); font-weight: 600;">Loading...</p>
             <p style="font-size: 11px; margin-top: 5px;">ID: <span id="patient-id">--</span></p>
         </div>
@@ -50,17 +50,25 @@
         <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px; margin-top: 20px; height: 100%; display: flex; flex-direction: column;">
             <p style="color: var(--text-muted); margin-bottom: 20px;">This module stores raw system alerts and telemetry data over time.</p>
             
-            <div style="flex: 1; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 15px; font-family: monospace; font-size: 13px; color: #cbd5e1; display: flex; flex-direction: column; gap: 10px;">
-                <div style="border-left: 3px solid var(--status-yellow); padding-left: 10px;">[09:41:22] WARN: High Pain detected. Confidence: 92.1%</div>
-                <div style="border-left: 3px solid var(--status-green); padding-left: 10px;">[09:40:05] INFO: Patient status normal. Emotion: Calm.</div>
-                <div style="border-left: 3px solid var(--accent); padding-left: 10px;">[09:35:10] INFO: New EEG data file uploaded successfully.</div>
-                <div style="border-left: 3px solid var(--status-green); padding-left: 10px;">[09:32:00] INFO: Dashboard stream started.</div>
-                <div style="border-left: 3px solid var(--accent); padding-left: 10px;">[09:31:14] INFO: User authenticated. Session active.</div>
+            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; flex: 1; text-align: center;">
+                    <h4 style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px;">Total Alerts</h4>
+                    <span id="total-alerts-count" style="font-size: 24px; font-weight: 700; color: white;">--</span>
+                </div>
+                <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; flex: 1; text-align: center;">
+                    <h4 style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px;">Critical Alerts</h4>
+                    <span id="critical-alerts-count" style="font-size: 24px; font-weight: 700; color: var(--status-red);">--</span>
+                </div>
+            </div>
+
+            <div id="dynamic-alerts" style="flex: 1; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 15px; font-family: monospace; font-size: 13px; color: #cbd5e1; display: flex; flex-direction: column; gap: 10px;">
+                <div style="text-align: center; color: var(--text-muted); padding: 20px;">Loading historical alerts...</div>
             </div>
         </div>
     </main>
 </div>
 
 <script type="module" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/history.js') }}"></script>
 </body>
 </html>

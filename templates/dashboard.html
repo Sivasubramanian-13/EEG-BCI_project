@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeuroSense AI | Clinical Dashboard</title>
+    <title>VoxAura AI | Clinical Dashboard</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -20,14 +20,14 @@
     <!-- COLUMN 1: Sidebar (Patient Panel) -->
     <aside class="sidebar glass-panel">
         <div class="brand">
-            <i class="fas fa-brain"></i> NeuroSense AI
+            <i class="fas fa-brain"></i> VoxAura AI
         </div>
 
         <div class="patient-card">
             <!-- Avatar could be dynamic, using a placeholder icon -->
             <img id="patient-avatar" src="https://ui-avatars.com/api/?name=Patient&background=0D8ABC&color=fff" alt="Patient Avatar">
             <h3 id="patient-name">Loading...</h3>
-            <p id="patient-details"><span id="patient-age">--</span> yrs • <span id="patient-gender">--</span></p>
+            <p id="patient-details"><span id="patient-age">--</span> yrs &bull; <span id="patient-gender">--</span></p>
             <p id="patient-condition" style="color: var(--accent); font-weight: 600;">Loading...</p>
             <p style="font-size: 11px; margin-top: 5px;">ID: <span id="patient-id">--</span></p>
         </div>
@@ -111,9 +111,7 @@
 
     <!-- COLUMN 3: Right Alerts & Monitoring -->
     <aside class="right-panel glass-panel">
-        <div id="file-log" style="font-size:12px; color:#38bdf8; margin-top:10px;">
-                    No file loaded
-        </div>
+        
         <!-- Alerts Grid -->
         <div>
             <h3 class="section-title">Critical Alerts</h3>
